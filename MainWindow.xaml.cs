@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,6 +21,32 @@ namespace CurrencyConverter
         public MainWindow()
         {
             InitializeComponent();
+            BindCurrency();
+        }
+
+        private void BindCurrency()
+        {
+            DataTable currency = new DataTable();
+            currency.Columns.Add("Text");
+            currency.Columns.Add("Value");
+
+            currency.Rows.Add("--SELECT--", 0);
+            currency.Rows.Add("INR", 1);
+            currency.Rows.Add("USD", 75);
+            currency.Rows.Add("EUR", 85);
+            currency.Rows.Add("SAR", 20);
+            currency.Rows.Add("POUND", 5);
+            currency.Rows.Add("DEM", 43);
+
+            cmbFromCurrency.ItemsSource = currency.DefaultView;
+            cmbFromCurrency.DisplayMemberPath = "Text";
+            cmbFromCurrency.SelectedValuePath = "Value";
+            cmbFromCurrency.SelectedIndex = 0;
+
+            cmbToCurrency.ItemsSource = currency.DefaultView;
+            cmbToCurrency.DisplayMemberPath = "Text";
+            cmbToCurrency.SelectedValuePath = "Value";
+            cmbToCurrency.SelectedIndex = 0;
         }
 
         private void Convert_Click(object sender, RoutedEventArgs e)
