@@ -1,18 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Data;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace CurrencyConverter
 {
@@ -51,7 +39,26 @@ namespace CurrencyConverter
 
         private void Convert_Click(object sender, RoutedEventArgs e)
         {
-            lblCurrency.Content = "Kurwa";
+            double ConvertedValue;
+
+            if (txtCurrency.Text == null || txtCurrency.Text.Trim() == "")
+            {
+                MessageBox.Show("Please Enter Currency", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                txtCurrency.Focus();
+                return;
+            }
+            else if (cmbFromCurrency.SelectedValue == null || cmbFromCurrency.SelectedIndex == 0)
+            {
+                MessageBox.Show("Please Select Currency From", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                cmbFromCurrency.Focus();
+                return;
+            }
+            else if (cmbToCurrency.SelectedValue == null || cmbToCurrency.SelectedIndex == 0)
+            {
+                MessageBox.Show("Please Select Currency To", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                cmbToCurrency.Focus();
+                return;
+            }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
