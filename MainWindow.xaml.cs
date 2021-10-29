@@ -21,5 +21,20 @@ namespace CurrencyConverter
         {
             InitializeComponent();
         }
+
+        private void Convert_Click(object sender, RoutedEventArgs e)
+        {
+            lblCurrency.Content = "Kurwa";
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            lblCurrency.Content = "Suka";
+        }
+
+        private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
+        {
+
+        }
     }
 }
