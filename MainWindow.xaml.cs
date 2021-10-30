@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
 
@@ -59,16 +60,38 @@ namespace CurrencyConverter
                 cmbToCurrency.Focus();
                 return;
             }
+
+            if (cmbFromCurrency.Text == cmbToCurrency.Text)
+            {
+                ConvertedValue = double.Parse(txtCurrency.Text);
+                // N3 decides how many 0 after . (dot) - N3 gives .000
+                lblCurrency.Content = cmbToCurrency.Text + " " + ConvertedValue.ToString("N3");
+            }
+            else
+            {
+                ConvertedValue = (double.Parse(cmbFromCurrency.SelectedValue.ToString())
+                    * double.Parse(txtCurrency.Text))
+                    / double.Parse(cmbToCurrency.SelectedValue.ToString());
+                lblCurrency.Content = cmbToCurrency.Text + " " + ConvertedValue.ToString("N3");
+            }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            lblCurrency.Content = "Suka";
+            txtCurrency.Text = string.Empty;
+            if (cmbFromCurrency.Items.Count > 0)
+                cmbFromCurrency.SelectedIndex = 0;
+            if (cmbToCurrency.Items.Count > 0)
+                cmbToCurrency.SelectedIndex = 0;
+            lblCurrency.Content = "";
+            txtCurrency.Focus();
         }
 
         private void NumberValidationTextBox(object sender, TextCompositionEventArgs e)
         {
-
+            // Does not allow commas, no max-length validation.
+            Regex regex = new Regex("[^0-9]+");
+            e.Handled = regex.IsMatch(e.Text);
         }
     }
 }
