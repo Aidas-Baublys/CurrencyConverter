@@ -1,4 +1,7 @@
-﻿using System.Data;
+﻿using System;
+using System.Configuration;
+using System.Data;
+using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Windows;
 using System.Windows.Input;
@@ -7,10 +10,25 @@ namespace CurrencyConverter
 {
     public partial class MainWindow : Window
     {
+        SqlConnection con = new SqlConnection();
+        SqlCommand cmd = new SqlCommand();
+        SqlDataAdapter da = new SqlDataAdapter();
+
+        private int CurrencyId = 0;
+        private double FromAmount = 0;
+        private double ToAmount = 0;
+
         public MainWindow()
         {
             InitializeComponent();
             BindCurrency();
+        }
+
+        public void mycon()
+        {
+            String Conn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
+            con = new SqlConnection(Conn);
+            con.Open();
         }
 
         private void BindCurrency()
