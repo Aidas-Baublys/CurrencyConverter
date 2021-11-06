@@ -33,27 +33,37 @@ namespace CurrencyConverter
 
         private void BindCurrency()
         {
-            DataTable currency = new DataTable();
-            currency.Columns.Add("Text");
-            currency.Columns.Add("Value");
+            mycon();
 
-            currency.Rows.Add("--SELECT--", 0);
-            currency.Rows.Add("INR", 1);
-            currency.Rows.Add("USD", 75);
-            currency.Rows.Add("EUR", 85);
-            currency.Rows.Add("SAR", 20);
-            currency.Rows.Add("POUND", 5);
-            currency.Rows.Add("DEM", 43);
+            DataTable dt = new DataTable();
 
-            cmbFromCurrency.ItemsSource = currency.DefaultView;
-            cmbFromCurrency.DisplayMemberPath = "Text";
-            cmbFromCurrency.SelectedValuePath = "Value";
-            cmbFromCurrency.SelectedIndex = 0;
+            cmd = new SqlCommand("select Id, CurrencyName from Currency_Master", con);
+            cmd.CommandType = CommandType.Text;
 
-            cmbToCurrency.ItemsSource = currency.DefaultView;
-            cmbToCurrency.DisplayMemberPath = "Text";
-            cmbToCurrency.SelectedValuePath = "Value";
-            cmbToCurrency.SelectedIndex = 0;
+            da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+
+            DataRow newRow = dt.NewRow();
+            newRow["Id"] = 0;
+            newRow["CurrencyName"] = "--SELECT--";
+
+            dt.Rows.InsertAt(newRow, 0);
+
+            if (dt != null && dt.Rows.Count > 0)
+            {
+                cmbFromCurrency.ItemsSource = dt.DefaultView;
+                cmbToCurrency.ItemsSource = dt.DefaultView;
+            }
+
+            con.Close();
+
+            cmbFromCurrency.DisplayMemberPath = "CurrencyName";
+            cmbFromCurrency.SelectedValuePath = "Id";
+            cmbFromCurrency.SelectedValue = 0;
+
+            cmbToCurrency.DisplayMemberPath = "CurrencyName";
+            cmbToCurrency.SelectedValuePath = "Id";
+            cmbToCurrency.SelectedValue = 0;
         }
 
         private void Convert_Click(object sender, RoutedEventArgs e)
@@ -114,7 +124,106 @@ namespace CurrencyConverter
 
         private void btnSave_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (txtAmount.Text == null || txtAmount.Text.Trim() == "")
+                {
+                    MessageBox.Show("Please enter amount", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    txtAmount.Focus();
+                    return;
+                }
+                else if (txtCurrencyName.Text == null || txtCurrencyName.Text.Trim() == "")
+                {
+                    MessageBox.Show("Please enter currency name", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                    txtCurrencyName.Focus();
+                    return;
+                }
+                else
+                {
+                    if (CurrencyId > 0)
+                    {
+                        if (MessageBox.Show("Are you sure you want to update ?",
+                            "Information",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            mycon();
+                            DataTable dt = new DataTable();
 
+                            cmd = new SqlCommand("UPDATE Currency_Master SET Amount = @Amount, CurrencyName = @CurrencyName WHERE Id = @Id", con);
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Parameters.AddWithValue("@Id", CurrencyId);
+                            cmd.Parameters.AddWithValue("@Amount", txtAmount.Text);
+                            cmd.Parameters.AddWithValue("@CurrencyName", txtCurrencyName.Text);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+
+                            MessageBox.Show("Data updated successfully", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    else
+                    {
+                        if (MessageBox.Show("Are you sure you want to save ?",
+                            "Information",
+                            MessageBoxButton.YesNo,
+                            MessageBoxImage.Question) == MessageBoxResult.Yes)
+                        {
+                            mycon();
+                            cmd = new SqlCommand("INSERT INTO Currency_Master(Amount, CurrencyName) VALUES(@Amount, @CurrencyName)", con);
+                            cmd.CommandType = CommandType.Text;
+                            cmd.Parameters.AddWithValue("@Amount", txtAmount.Text);
+                            cmd.Parameters.AddWithValue("@CurrencyName", txtCurrencyName.Text);
+                            cmd.ExecuteNonQuery();
+                            con.Close();
+
+                            MessageBox.Show("Data saved successfully", "Information", MessageBoxButton.OK, MessageBoxImage.Information);
+                        }
+                    }
+                    ClearMaster();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        public void GetData()
+        {
+            mycon();
+
+            DataTable dt = new DataTable();
+
+            cmd = new SqlCommand("SELECT * FROM Currency_Master", con);
+            cmd.CommandType = CommandType.Text;
+
+            da = new SqlDataAdapter(cmd);
+            da.Fill(dt);
+
+            if (dt != null && dt.Rows.Count > 0)
+                dgvCurrency.ItemsSource = dt.DefaultView;
+            else
+                dgvCurrency.ItemsSource = null;
+
+            con.Close();
+        }
+
+        private void ClearMaster()
+        {
+            try
+            {
+                txtAmount.Text = string.Empty;
+                txtCurrencyName.Text = string.Empty;
+                btnSave.Content = "Save";
+                GetData();
+                CurrencyId = 0;
+                BindCurrency();
+                txtAmount.Focus();
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show(ex.Message, "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void btnCancel_Click(object sender, RoutedEventArgs e)
