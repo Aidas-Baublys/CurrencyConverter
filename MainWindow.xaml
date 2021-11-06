@@ -140,8 +140,15 @@
                     <Label Height="40" Width="180" Content="Currency Name : " Margin="60 0 0 0" VerticalAlignment="Bottom" Foreground="White" FontSize="20"></Label>
                 </StackPanel>
                 <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Height="60" Width="800" VerticalAlignment="Bottom" Margin="100,0">
-                    <TextBox Name="txtAmount" Width="200" Height="30" Margin="180 0 0 0" PreviewTextInput="NumberValidationTextBox" FontSize="18" VerticalContentAlignment="Center" VerticalAlignment="Top"></TextBox>
-                    <TextBox Name="txtCurrencyName" Width="200" Height="30" Margin="40 0 0 0" FontSize="18" VerticalContentAlignment="Center" VerticalAlignment="Top" MaxLength="50" CharacterCasing="Upper"></TextBox>
+                    <TextBox Name="txtAmount" 
+                             Width="200" 
+                             Height="30" 
+                             Margin="180 0 0 0" 
+                             PreviewTextInput="NumberValidationTextBox" 
+                             FontSize="18" 
+                             VerticalContentAlignment="Center" 
+                             VerticalAlignment="Top"/>
+                    <TextBox Name="txtCurrencyName" Width="200" Height="30" Margin="40 0 0 0" FontSize="18" VerticalContentAlignment="Center" VerticalAlignment="Top" MaxLength="50" CharacterCasing="Upper"/>
                 </StackPanel>
                 <StackPanel Grid.Row="2" Height="60" Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,0,-6,0">
                     <Button Name="btnSave" 
@@ -178,17 +185,26 @@
                     </Button>
                 </StackPanel>
                 <StackPanel Height="200" Grid.Row="3" VerticalAlignment="Top">
-                    <DataGrid Name="dgvCurrency" AutoGenerateColumns="False" Height="180" Margin="10" Width="480" Background="Transparent" CanUserAddRows="False" SelectedCellsChanged="dgvCurrency_SelectedCellsChanged" SelectionUnit="Cell" VerticalScrollBarVisibility="Auto">
+                    <DataGrid Name="dgvCurrency" 
+                              AutoGenerateColumns="False" 
+                              Height="180" 
+                              Margin="10" 
+                              Width="480" 
+                              Background="Transparent" 
+                              CanUserAddRows="False" 
+                              SelectedCellsChanged="dgvCurrency_SelectedCellsChanged" 
+                              SelectionUnit="Cell" 
+                              VerticalScrollBarVisibility="Auto">
                         <DataGrid.Columns>
                             <DataGridTextColumn x:Name="Id" Header="Id" Width="100" CanUserResize="False" Visibility="Hidden" Binding="{Binding Path=Id}"/>
-                            <DataGridTemplateColumn Header="" Width="70" IsReadOnly="True" DisplayIndex="0">
+                            <DataGridTemplateColumn Width="70" IsReadOnly="True" DisplayIndex="0">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock>Edit</TextBlock>
                                     </DataTemplate>
                                 </DataGridTemplateColumn.CellTemplate>
                             </DataGridTemplateColumn>
-                            <DataGridTemplateColumn Header="" Width="70" IsReadOnly="True" DisplayIndex="1">
+                            <DataGridTemplateColumn Width="70" IsReadOnly="True" DisplayIndex="1">
                                 <DataGridTemplateColumn.CellTemplate>
                                     <DataTemplate>
                                         <TextBlock>Delete</TextBlock>
