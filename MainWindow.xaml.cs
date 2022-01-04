@@ -1,8 +1,11 @@
 ﻿using System;
+using Newtonsoft.Json;
 using System.Configuration;
 using System.Data;
 using System.Data.SqlClient;
+using System.Net.Http;
 using System.Text.RegularExpressions;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
@@ -19,12 +22,64 @@ namespace CurrencyConverter
         private double FromAmount = 0;
         private double ToAmount = 0;
 
+        public class Root
+        {
+            public Rate rates { get; set; }
+            public long timestamp;
+            public string license;
+        }
+
+        public class Rate
+        {
+            public double INR { get; set; }
+            public double JPY { get; set; }
+            public double USD { get; set; }
+            public double NZD { get; set; }
+            public double EUR { get; set; }
+            public double CAD { get; set; }
+            public double ISK { get; set; }
+            public double PHP { get; set; }
+            public double DKK { get; set; }
+            public double CZK { get; set; }
+        }
+
         public MainWindow()
         {
             InitializeComponent();
             BindCurrency();
             GetData();
         }
+
+        public static async Task<Root> GetData<T>(string url)
+        {
+            var myRoot = new Root();
+
+            try
+            {
+                using (var client = new HttpClient())
+                {
+                    client.Timeout = TimeSpan.FromMinutes(1);
+                    HttpResponseMessage response = await client.GetAsync(url);
+
+                    if (response.StatusCode == System.Net.HttpStatusCode.OK)
+                    {
+                        var ResponceString = await response.Content.ReadAsStringAsync();
+                        var ResponceObject = JsonConvert.DeserializeObject<Root>(ResponceString);
+
+                        MessageBox.Show("Timestamp: " + ResponceObject.timestamp, "Information", MessageBoxButton.OK, MessageBoxImage.Asterisk);
+
+                        return ResponceObject;
+                    }
+
+                    return myRoot;
+                }
+            }
+            catch (Exception)
+            {
+                return myRoot;
+            }
+        }
+
 
         public void mycon()
         {
