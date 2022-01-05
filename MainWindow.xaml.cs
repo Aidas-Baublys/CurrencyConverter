@@ -87,7 +87,6 @@ namespace CurrencyConverter
             }
         }
 
-
         public void mycon()
         {
             String Conn = ConfigurationManager.ConnectionStrings["ConnectionString"].ConnectionString;
@@ -113,7 +112,7 @@ namespace CurrencyConverter
             dt.Rows.Add("PHP", val.rates.PHP);
             dt.Rows.Add("DKK", val.rates.DKK);
             dt.Rows.Add("CZK", val.rates.CZK);
- 
+
             cmbFromCurrency.ItemsSource = dt.DefaultView;
             cmbFromCurrency.DisplayMemberPath = "Text";
             cmbFromCurrency.SelectedValuePath = "Value";
@@ -156,9 +155,9 @@ namespace CurrencyConverter
             }
             else
             {
-                ConvertedValue = (double.Parse(cmbFromCurrency.SelectedValue.ToString())
+                ConvertedValue = (double.Parse(cmbToCurrency.SelectedValue.ToString())
                     * double.Parse(txtCurrency.Text))
-                    / double.Parse(cmbToCurrency.SelectedValue.ToString());
+                    / double.Parse(cmbFromCurrency.SelectedValue.ToString());
                 lblCurrency.Content = cmbToCurrency.Text + " " + ConvertedValue.ToString("N3");
             }
         }
