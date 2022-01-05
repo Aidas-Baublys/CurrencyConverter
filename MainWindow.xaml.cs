@@ -14,6 +14,8 @@ namespace CurrencyConverter
 {
     public partial class MainWindow : Window
     {
+        Root val = new Root();
+
         SqlConnection con = new SqlConnection();
         SqlCommand cmd = new SqlCommand();
         SqlDataAdapter da = new SqlDataAdapter();
@@ -46,8 +48,13 @@ namespace CurrencyConverter
         public MainWindow()
         {
             InitializeComponent();
+            GetValue();
+        }
+
+        private async void GetValue()
+        {
+            val = await GetData<Root>("https://openexchangerates.org/api/latest.json?app_id=895904abe7ba49f4a4962e21c2b8c47f");
             BindCurrency();
-            GetData();
         }
 
         public static async Task<Root> GetData<T>(string url)
@@ -90,37 +97,32 @@ namespace CurrencyConverter
 
         private void BindCurrency()
         {
-            mycon();
-
             DataTable dt = new DataTable();
 
-            cmd = new SqlCommand("select Id, CurrencyName from Currency_Master", con);
-            cmd.CommandType = CommandType.Text;
+            dt.Columns.Add("Text");
+            dt.Columns.Add("Value");
 
-            da = new SqlDataAdapter(cmd);
-            da.Fill(dt);
+            dt.Rows.Add("--SELECT--", 0);
+            dt.Rows.Add("INR", val.rates.INR);
+            dt.Rows.Add("JPY", val.rates.JPY);
+            dt.Rows.Add("USD", val.rates.USD);
+            dt.Rows.Add("NZD", val.rates.NZD);
+            dt.Rows.Add("EUR", val.rates.EUR);
+            dt.Rows.Add("CAD", val.rates.CAD);
+            dt.Rows.Add("ISK", val.rates.ISK);
+            dt.Rows.Add("PHP", val.rates.PHP);
+            dt.Rows.Add("DKK", val.rates.DKK);
+            dt.Rows.Add("CZK", val.rates.CZK);
+ 
+            cmbFromCurrency.ItemsSource = dt.DefaultView;
+            cmbFromCurrency.DisplayMemberPath = "Text";
+            cmbFromCurrency.SelectedValuePath = "Value";
+            cmbFromCurrency.SelectedIndex = 0;
 
-            DataRow newRow = dt.NewRow();
-            newRow["Id"] = 0;
-            newRow["CurrencyName"] = "--SELECT--";
-
-            dt.Rows.InsertAt(newRow, 0);
-
-            if (dt != null && dt.Rows.Count > 0)
-            {
-                cmbFromCurrency.ItemsSource = dt.DefaultView;
-                cmbToCurrency.ItemsSource = dt.DefaultView;
-            }
-
-            con.Close();
-
-            cmbFromCurrency.DisplayMemberPath = "CurrencyName";
-            cmbFromCurrency.SelectedValuePath = "Id";
-            cmbFromCurrency.SelectedValue = 0;
-
-            cmbToCurrency.DisplayMemberPath = "CurrencyName";
-            cmbToCurrency.SelectedValuePath = "Id";
-            cmbToCurrency.SelectedValue = 0;
+            cmbToCurrency.ItemsSource = dt.DefaultView;
+            cmbToCurrency.DisplayMemberPath = "Text";
+            cmbToCurrency.SelectedValuePath = "Value";
+            cmbToCurrency.SelectedIndex = 0;
         }
 
         private void Convert_Click(object sender, RoutedEventArgs e)
